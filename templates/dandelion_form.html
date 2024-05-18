@@ -1,0 +1,10 @@
+<form id="signin" class="form-inline my-2 my-lg-0" role="form">
+  <input id="username" type="text" class="form-control mr-sm-2" name="username" value="" placeholder="Dandelion Username">
+  <input id="password" type="password" class="form-control mr-sm-2" name="password" value="" placeholder="Dandelion Password">
+  <select id="dandelionServerSelection" class="form-control">
+    {% for o in option_list %}
+      <option value="{{ o }}">{{ o }}</option>
+    {% endfor %}
+  </select>
+  <button id="loginBut" type="button" onclick="login()" class="btn btn-outline-success my-2 my-sm-0">Login</button>
+</form>

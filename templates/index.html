@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bridge Configuration Tool</title>
+
+    <!-- CDN Dependencies -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+            integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xterm/3.12.0/xterm.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xterm/3.12.0/addons/fit/fit.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/xterm/3.12.0/xterm.min.css" />
+    <link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.4.0/css/bootstrap4-toggle.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.4.0/js/bootstrap4-toggle.min.js"></script>
+
+    <!-- Local Dependencies -->
+    <script type="text/javascript" src="{{ url_for('static', filename='js/app.js') }}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">Bridge Configuration Tool</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div id="alertsMain" class="alert_box"></div>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+        </ul>
+        <div id="top-navbar"></div>
+    </div>
+</nav>
+
+<div class="container maincontent">
+
+    <nav class="nav nav-tabs">
+        <a class="nav-item nav-link active" href="#pFlash" data-toggle="tab">Flash</a>
+        <a class="nav-item nav-link" href="#pFlashMaster" data-toggle="tab">Flash Master</a>
+        <a class="nav-item nav-link" href="#pConfig" data-toggle="tab">Configuration</a>
+        <a class="nav-item nav-link" href="#pTests" data-toggle="tab">Tests</a>
+    </nav>
+
+    <div class="tab-content">
+        <div class="tab-pane active" id="pFlash">
+            <form>
+                <div class="form-group">
+                    <label for="image_path">Image Path:</label>
+                    <input id="image_path" type="text" value="/media/usb_drive/Bridge_v2.X.X_compress_image" class="form-control"/>
+                    <small id="image_path_help" class="form-text text-muted">Same value as parameters passed to emmc_flash script.</small>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="encrypt" checked>
+                    <label class="form-check-label" for="encrypt">Encrypt partition</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="fusebootemmc">
+                    <label class="form-check-label" for="fusebootemmc">fuse boot on emmc</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="fusebootsdcard">
+                    <label class="form-check-label" for="fusebootsdcard">fuse boot on sdcard</label>
+                </div>
+                <div class="text-center">
+                    <button type="button" class="btn btn-primary" id="launchFlash" onclick="flash();">Flash</button>
+                    <button type="button" class="btn btn-primary" id="clearflashlog" onclick="clear_flash();">Clear</button>
+                </div>
+            </form>
+            <div id="logs_flash">
+                <h5>Logs</h5>
+                <div id="log-flash" class="jumbotron log-console"></div>
+            </div>
+        </div>
+        <div class="tab-pane" id="pFlashMaster">
+            <form method="post" action="/">
+                <div class="form-group">
+                    <label for="firmwareFileSelection">Select Firmware to flash:</label>
+                    <select id="firmwareFileSelection" class="form-control"></select>
+                </div>
+                <div class="text-center">
+                    <button id="FlashDongleMaster" type="button" class="text-center btn btn-primary" onclick="flash_master();">Flash DongleMaster</button>
+                    <button id="ClearDongleMasterLogs" type="button" class="text-center btn btn-primary" onclick="clear_master();">Clear</button>
+                </div>
+            </form>
+            <div id="logs_FlashMaster">
+                <h5>Logs</h5>
+                <div id="logFlashMaster-window" class="jumbotron log-console"></div>
+            </div>
+        </div>
+        <div class="tab-pane" id="pConfig">
+            <div id="sdAutoConfig-form">
+                <form method="post" action="/">
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="confmicrobridge" onchange="selectBridge()"/>
+                        <label class="form-check-label" for="confmicrobridge">Configure Translator BLE</label>
+                    </div>
+                    <div class="form-group">
+                        <label for="snInput">Serial Number:</label>
+                        <input id="snInput" type="text" class="form-control" disabled/>
+                    </div>
+                    <div class="form-group">
+                        <label for="guidInput">Bridge GUID:</label>
+                        <input id="guidInput" type="text" class="form-control"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="omPollingInt">Openmuc Polling Interval (minutes) :</label>
+                        <input id="omPollingInt" type="text" class="form-control"/>
+                        <small id="pollingHelp" class="form-text text-muted">Set the delay between two openmuc data acquisitions. Value in minutes.</small>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="enableAmberDongle">
+                        <label class="form-check-label" for="enableAmberDongle">Enable Amber Dongle</label>
+                        <input type="checkbox" class="left-marg" data-toggle="toggle" data-on="Serial" data-off="USB" id="amberType" data-width="100" data-height="15" data-onstyle="outline-warning" data-offstyle="outline-success" checked>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="configurevpn" checked>
+                        <label class="form-check-label" for="configurevpn">Configure VPN on Bridge</label>
+                    </div>
+                    <div class="text-center">
+                        <button id="submitBut" type="button" class="text-center btn btn-primary" onclick="configure();">Configure</button>
+                        <button id="clearBut" type="button" class="text-center btn btn-primary" onclick="clear_config();">Clear</button>
+                    </div>
+                </form>
+            </div>
+            <div id="logs">
+                <h5>Logs</h5>
+                <div id="log-window" class="jumbotron log-console"></div>
+            </div>
+        </div>
+        <div class="tab-pane" id="pTests">
+            <form method="post" action="/" id="test_list" class="text-center">
+            </form>
+            <div id="logs-test">
+                <h5>Logs</h5>
+                <div id="log-test-window" class="jumbotron log-console"></div>
+            </div>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

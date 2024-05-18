@@ -1,0 +1,27 @@
+<div style="display: inline-block;">
+{% for o in test_list %}
+    <div class="form-check tests">
+        <input type="checkbox" class="form-check-input" id="{{ o }}" checked>
+        <label class="form-check-label" for="{{ o }}" style="min-inline-size: 20ch;">{{ o }}</label>
+        {% if o == "ble_test.sh"%}
+        <input id="ble_mac_address" type="text" placeholder="Danfoss MAC address">
+        <input id="ble_pin_code" type="password" placeholder="Danfoss pin code">
+        {% endif %}
+        {% if o == "wifi_test.sh"%}
+        <input id="wifi_ssid" type="text" placeholder="wifi AP ssid">
+        <input id="wifi_passphrase" type="password" placeholder="wifi AP passphrase">
+        <input id="wifi_hidden" type="checkbox">
+        <label class="form-check-label" for="wifi_hidden" style="min-inline-size: 10ch;">hidden</label>
+        {% endif %}
+        <button type="button" class="text-center btn btn-primary" onclick="launch_test('{{ o }}');" >Launch</button>
+        <div class="test_result">
+            <label style="color: red;">Failed</label>
+            <label style="color: green;">Passed</label>
+        </div>
+    </div>
+{% endfor %}
+</div>
+<div class="text-center">
+    <button id="launchAllTests" type="button" class="text-center btn btn-primary" onclick="launch_all_tests();" value="launchAll">Launch all selected Test</button>
+    <button id="resetTests" type="button" class="text-center btn btn-primary" onclick="clear_tests();">Clear</button>
+</div>

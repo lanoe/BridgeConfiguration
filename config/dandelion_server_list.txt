@@ -1,0 +1,3 @@
+dandelion.cloud.demandside.fr
+dalkia.cloud.demandside.fr
+serv-dev2.dsinstruments.fr

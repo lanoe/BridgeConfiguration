@@ -1,0 +1,49 @@
+#sdAutoConfig-form {
+    margin-bottom: 50px;
+}
+
+.log-console{
+    height: 360px;
+}
+
+html {
+    height: 100%;
+}
+
+.jumbotron {
+    padding: 0;
+    border-radius: 0;
+}
+
+.maincontent {
+    margin-top: 70px;
+}
+
+.tab-pane {
+    padding-top : 10px;
+}
+
+.tests {
+    margin-top : 5px;
+    margin-bottom : 5px;
+    text-align: start;
+}
+
+.left-marg{
+    margin-left : 150px;
+}
+
+.alert_box {
+    position: fixed;
+    top: 1vmin;
+    left: 1vmin;
+    z-index: 2000;
+}
+
+.test_result{
+    display: inline-block;
+}
+
+.test_result label{
+    display: none;
+}
